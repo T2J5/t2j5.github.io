@@ -16,16 +16,16 @@
   <meta name="author" content="TJ">
   <meta name="keywords" content="">
   
-    <meta name="description" content="http1、http2相对于 http1.0 http1.1 的优化：  缓存处理：多了 Entity tag，if-Unmodified-since,if-Match,if-None-Match 等缓存信息（http1.0 if-modified-since, expires）  带宽优化及网络连接的使用  错误通知的管理  Host 头处理  长连接 http1.1 默认开启Connectio">
+    <meta name="description" content="http1、http2相对于 http1.0 http1.1 的优化：  缓存处理：多了 Entity tag，if-Unmodified-since,if-Match,if-None-Match 等缓存信息（http1.0 if-modified-since, expires）  带宽优化及网络连接的使用  错误通知的管理  Host 头处理，针对多虚拟机在同一物理主机情况  长连接 http1">
 <meta property="og:type" content="article">
 <meta property="og:title" content="http">
 <meta property="og:url" content="https://t2j5.github.io/2023/09/05/http/index.html">
 <meta property="og:site_name" content="TJ">
-<meta property="og:description" content="http1、http2相对于 http1.0 http1.1 的优化：  缓存处理：多了 Entity tag，if-Unmodified-since,if-Match,if-None-Match 等缓存信息（http1.0 if-modified-since, expires）  带宽优化及网络连接的使用  错误通知的管理  Host 头处理  长连接 http1.1 默认开启Connectio">
+<meta property="og:description" content="http1、http2相对于 http1.0 http1.1 的优化：  缓存处理：多了 Entity tag，if-Unmodified-since,if-Match,if-None-Match 等缓存信息（http1.0 if-modified-since, expires）  带宽优化及网络连接的使用  错误通知的管理  Host 头处理，针对多虚拟机在同一物理主机情况  长连接 http1">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://t2j5.github.io/img/http_index.jpg">
 <meta property="article:published_time" content="2023-09-05T04:46:39.000Z">
-<meta property="article:modified_time" content="2023-09-05T14:07:15.681Z">
+<meta property="article:modified_time" content="2023-09-10T16:05:50.268Z">
 <meta property="article:author" content="TJ">
 <meta property="article:tag" content="review">
 <meta property="article:tag" content="http">
@@ -327,7 +327,7 @@
 </li>
 <li><p>错误通知的管理</p>
 </li>
-<li><p>Host 头处理</p>
+<li><p>Host 头处理，针对多虚拟机在同一物理主机情况</p>
 </li>
 <li><p>长连接 http1.1 默认开启<code>Connection： keep-alive</code>,一定程度上摸不了 http1.0 每次请求都要创建连接的缺点</p>
 </li>

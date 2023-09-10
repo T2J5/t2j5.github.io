@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://t2j5.github.io/img/event-loop-index.jpg">
 <meta property="article:published_time" content="2023-09-06T07:25:39.000Z">
-<meta property="article:modified_time" content="2023-09-10T11:22:59.723Z">
+<meta property="article:modified_time" content="2023-09-10T16:05:50.239Z">
 <meta property="article:author" content="TJ">
 <meta property="article:tag" content="review">
 <meta property="article:tag" content="browser">
@@ -257,7 +257,7 @@
         <i class="iconfont icon-chart"></i>
         
           <!-- compatible with older versions-->
-          11k 字
+          15k 字
         
       </span>
     
@@ -269,7 +269,7 @@
         
         
           <!-- compatible with older versions-->
-          92 分钟
+          128 分钟
         
       </span>
     
@@ -605,7 +605,122 @@
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs js">promise_.<span class="hljs-title function_">then</span>(<span class="hljs-function">(<span class="hljs-params">value</span>) =&gt;</span> &#123;<br>  <span class="hljs-comment">// 回调函数被激活后，将主线程控制权交给foo协程，并将value传给协程</span><br>&#125;);<br></code></pre></td></tr></table></figure>
 
 <p>foo 协程激活之后，会把刚才的 value 值赋给了变量 a，然后 foo 协程继续执行后续语句，执行完成之后，将控制权归还给父协程。</p>
-<h2 id="页面性能分析"><a href="#页面性能分析" class="headerlink" title="页面性能分析"></a>页面性能分析</h2>
+<h2 id="页面性能分析"><a href="#页面性能分析" class="headerlink" title="页面性能分析"></a>页面性能分析</h2><h3 id="优化时间线上耗时项"><a href="#优化时间线上耗时项" class="headerlink" title="优化时间线上耗时项"></a>优化时间线上耗时项</h3><ol>
+<li>排队时间过久</li>
+</ol>
+<p>排队时间过久，大概率是由浏览器为每个域名最多维护 6 个连接导致的。那么基于这个原因，你就可以让 1 个站点下面的资源放在多个域名下面，这种方案称为域名分片技术。还可以将站点升级到 http2，因为 http2 已经没有每个域名最多维护 6 个 tcp 连接的限制了。</p>
+<ol start="2">
+<li>第一字节时间（TTFB）时间过久</li>
+</ol>
+<ul>
+<li>服务器生成页面数据的时间过久。对于动态网页来说，服务器收到用户打开一个页面的请求时，首先要从数据库中读取该页面需要的数据，然后把这些数据传入到模板中，模板渲染后，再返回给用户。服务器在处理这个数据的过程中，可能某个环节会出问题。</li>
+<li>网络的原因。比如使用了低带宽的服务器，或者本来用的是电信的服务器，可联通的网络用户要来访问你的服务器，这样也会拖慢网速。</li>
+<li>发送请求头时带上了多余的用户信息。比如一些不必要的 Cookie 信息，服务器接收到这些 Cookie 信息之后可能需要对每一项都做处理，这样就加大了服务器的处理时长。</li>
+</ul>
+<ol start="3">
+<li>Content Download 时间过久</li>
+</ol>
+<p>如果单个请求的 Content Download 花费了大量时间，有可能是字节数太多的原因导致。这时候就需要减少文件大小，比如压缩、去掉源码中不必要的注释等方法。</p>
+<h3 id="Dom-树构建"><a href="#Dom-树构建" class="headerlink" title="Dom 树构建"></a>Dom 树构建</h3><p>JavaScript 文件的下载过程会阻塞 DOM 解析，而通常下载又是非常耗时的，会受到网络环境、JavaScript 文件大小等因素的影响。</p>
+<p>Chrome 浏览器做了很多优化，其中一个主要的优化是预解析操作。当渲染引擎收到字节流之后，会开启一个预解析线程，用来分析 HTML 文件中包含的 JavaScript、CSS 等相关文件，解析到相关文件之后，预解析线程会提前下载这些文件。</p>
+<p>引入 JavaScript 线程会阻塞 DOM，不过也有一些相关的策略来规避，比如使用 CDN 来加速 JavaScript 文件的加载，压缩 JavaScript 文件的体积。另外，如果 JavaScript 文件中没有操作 DOM 相关代码，就可以将该 JavaScript 脚本设置为异步加载，通过 async 或 defer 来标记代码，</p>
+<p>async 标志的脚本文件一旦加载完成，会立即执行；而使用了 defer 标记的脚本文件，需要在 <code>DOMContentLoaded</code> 事件之前执行。</p>
+<h3 id="CSSDom-树构建"><a href="#CSSDom-树构建" class="headerlink" title="CSSDom 树构建"></a>CSSDom 树构建</h3><img src="/2023/09/06/browser-render/css-render.png" srcset="/img/loading.gif" lazyload class="" title="css-render">
+
+<p>渲染流水线影响到了首次页面展示的速度，而首次页面展示的速度又直接影响到了用户体验。</p>
+<h4 id="白屏优化"><a href="#白屏优化" class="headerlink" title="白屏优化"></a>白屏优化</h4><ul>
+<li>通过内联 JavaScript、内联 CSS 来移除这两种类型的文件下载，这样获取到 HTML 文件之后就可以直接开始渲染流程了。</li>
+<li>尽量减少文件大小，比如通过 webpack 等工具移除一些不必要的的注释，压缩 js 文件</li>
+<li>将一些不需要再解析 HTML 阶段使用的 js 标记上 async 或者 defer</li>
+<li>对于大的 css 文件，可以通过媒体查询属性，将其拆分为多个不同用途的 css 文件，这样只有在特定的场景下才会加载特定的 css 文件</li>
+</ul>
+<h3 id="利用分层技术优化"><a href="#利用分层技术优化" class="headerlink" title="利用分层技术优化"></a>利用分层技术优化</h3><p>添加 will-change 的 css 属性，提前告诉渲染引擎将要做一些变化，渲染引擎会将该元素单独实现一帧，等变化发生时，渲染引擎会通过合成线程直接去处理变化，这些变换并没有涉及到主线程，这样就大大提升了渲染效率。</p>
+<p>如果涉及到一些可以使用合成线程来处理 CSS 特效或者动画的情况，就尽量使用 will-change 来提前告诉渲染引擎，让它为该元素准备独立的层。但是凡事都有两面性，每当渲染引擎为一个元素准备一个独立层的时候，它占用的内存也会大大增加，因为从层树开始，后续每个阶段都会多一个层结构，这些都需要额外的内存，所以你需要恰当地使用 will-change。</p>
+<h3 id="页面性能"><a href="#页面性能" class="headerlink" title="页面性能"></a>页面性能</h3><ol>
+<li>减少 js 脚本执行时间</li>
+</ol>
+<ul>
+<li>将一次执行的函数分解为多个任务，使得每次执行时间不要过久</li>
+<li>采用 web workers</li>
+</ul>
+<ol start="2">
+<li>避免强制同步布局</li>
+</ol>
+<p>强制同步布局，是指 JavaScript 强制将计算样式和布局操作提前到当前的任务中</p>
+<ol start="3">
+<li>避免布局抖动</li>
+</ol>
+<p>布局抖动，是指在一次 JavaScript 执行过程中，多次执行强制布局和抖动操作。</p>
+<p>尽量不要在修改 DOM 结构时再去查询一些相关值。</p>
+<ol start="4">
+<li>合理利用 css 合成动画</li>
+</ol>
+<p>合成动画是直接在合成线程上执行的，这和在主线程上执行的布局、绘制等操作不同，如果主线程被 JavaScript 或者一些布局任务占用，CSS 动画依然能继续执行。所以要尽量利用好 CSS 合成动画，如果能让 CSS 处理动画，就尽量交给 CSS 来操作。</p>
+<p>另外，如果能提前知道对某个元素执行动画操作，那就最好将其标记为 will-change，这是告诉渲染引擎需要将该元素单独生成一个图层。</p>
+<ol start="5">
+<li>避免频繁地垃圾回收</li>
+</ol>
+<p>我们知道 JavaScript 使用了自动垃圾回收机制，如果在一些函数中频繁创建临时对象，那么垃圾回收器也会频繁地去执行垃圾回收策略。这样当垃圾回收操作发生时，就会占用主线程，从而影响到其他任务的执行，严重的话还会让用户产生掉帧、不流畅的感觉。</p>
+<p>所以要尽量避免产生那些临时垃圾数据。那该怎么做呢？可以尽可能优化储存结构，尽可能避免小颗粒对象的产生。</p>
+<h2 id="webComponent"><a href="#webComponent" class="headerlink" title="webComponent"></a>webComponent</h2><p>要使用 webComponent，需要实现下面三个步骤</p>
+<ol>
+<li>首先使用 template 属性来创建模板。</li>
+<li>其次 我们需要创建一个类，在该类的构造函数中要完成 3 件事：</li>
+</ol>
+<ul>
+<li>查找模板内容</li>
+<li>创建影子 Dom</li>
+<li>再将模板添加到影子 DOM 上</li>
+</ul>
+<p>影子 DOM 的作用是将模板中的内容与全局 DOM 和 css 进行隔离，这样我们就可以实现元素和样式的私有化。在创建好封影子 DOM 的类之后，我们就可以使用 customElements.define 来自定义元素了。影子 DOM 的 JavaScript 脚本是不会被隔离的，比如在影子 DOM 定义的 JavaScript 函数依然可以被外部访问，这是因为 JavaScript 语言本身已经可以很好地实现组件化了。</p>
+<ol start="3">
+<li>最后像使用 HTML 元素一样使用该元素</li>
+</ol>
+<h2 id="浏览器网络"><a href="#浏览器网络" class="headerlink" title="浏览器网络"></a>浏览器网络</h2><h3 id="http1-1-优化"><a href="#http1-1-优化" class="headerlink" title="http1.1 优化"></a>http1.1 优化</h3><ul>
+<li>增加了持久连接</li>
+<li>浏览器为每个域名最多同时维护 6 个 TCP 连接</li>
+<li>使用 CDN 的实现名片机制</li>
+</ul>
+<h3 id="http1-1-主要问题"><a href="#http1-1-主要问题" class="headerlink" title="http1.1 主要问题"></a>http1.1 主要问题</h3><p>http1.1 对带宽的利用率并不理想。带宽是指每秒最大能发送或者接收的字节数。每秒能发送的最大字节数称为上行带宽，没笑能够接收的最大字节数成为下行带宽。</p>
+<p>之所以说 HTTP&#x2F;1.1 对带宽的利用率不理想，是因为 HTTP&#x2F;1.1 很难将带宽用满。比如我们常说的 100M 带宽，实际的下载速度能达到 12.5M&#x2F;S，而采用 HTTP&#x2F;1.1 时，也许在加载页面资源时最大只能使用到 2.5M&#x2F;S，很难将 12.5M 全部用满。</p>
+<p>原因如下：</p>
+<ol>
+<li><p>TCP 的慢启动<br>一旦一个 TCP 连接建立之后，就进入了发送数据状态，刚开始 TCP 协议会采用一个非常慢的速度去发送数据，然后慢慢加快发送数据的速度，直到发送数据的速度达到一个理想状态，我们把这个过程称为慢启动。</p>
+<p>慢启动是 TCP 为了减少网络拥塞的一种策略，我们是没有办法改变的。</p>
+<p>而之所以说慢启动会带来性能问题，是因为页面中常用的一些关键资源文件本来就不大，如 HTML 文件、CSS 文件和 JavaScript 文件，通常这些文件在 TCP 连接建立好之后就要发起请求的，但这个过程是慢启动，所以耗费的时间比正常的时间要多很多，这样就推迟了宝贵的首次渲染页面的时长了。</p>
+</li>
+<li><p>同时开启了多条 TCP 连接，那么这么多连接会竞争固定的带宽<br>因为有的 TCP 连接下载的是一些关键资源，如 CSS 文件、JavaScript 文件等，而有的 TCP 连接下载的是图片、视频等普通的资源文件，但是多条 TCP 连接之间又不能协商让哪些关键资源优先下载，这样就有可能影响那些关键资源的下载速度了。</p>
+</li>
+<li><p>http1.1 队头阻塞问题<br>在 HTTP&#x2F;1.1 中使用持久连接时，虽然能公用一个 TCP 管道，但是在一个管道中同一时刻只能处理一个请求，在当前的请求没有结束之前，其他的请求只能处于阻塞状态。这意味着我们不能随意在一个管道中发送请求和接收内容。</p>
+</li>
+</ol>
+<h3 id="http2-的多路复用"><a href="#http2-的多路复用" class="headerlink" title="http2 的多路复用"></a>http2 的多路复用</h3><p>HTTP&#x2F;2 的思路就是一个域名只使用一个 TCP 长连接来传输数据，这样整个页面资源的下载过程只需要一次慢启动，同时也避免了多个 TCP 连接竞争带宽所带来的问题。</p>
+<p>HTTP&#x2F;2 使用了多路复用技术，可以将请求分成一帧一帧的数据去传输，这样带来了一个额外的好处，就是当收到一个优先级高的请求时，比如接收到 JavaScript 或者 CSS 关键资源的请求，服务器可以暂停之前的请求来优先处理关键资源的请求。</p>
+
+
+<p>http2 添加了一个二进制分帧层，如下 HTTP2 请求和接收过程</p>
+<ul>
+<li>首先，浏览器准备好请求数据，包括了请求行、请求头等信息，如果是 POST 方法，那么还要有请求体。</li>
+<li>这些数据经过二进制分帧层处理之后，会被转换为一个个带有请求 ID 编号的帧，通过协议栈将这些帧发送给服务器。</li>
+<li>服务器接收到所有帧之后，会将所有相同 ID 的帧合并为一条完整的请求信息。<br>然后服务器处理该条请求，并将处理的响应行、响应头和响应体分别发送至二进制分帧层。<br>同样，二进制分帧层会将这些响应数据转换为一个个带有请求 ID 编号的帧，经过协议栈发送给浏览器。</li>
+<li>浏览器接收到响应帧之后，会根据 ID 编号将帧的数据提交给对应的请求</li>
+</ul>
+<h3 id="http2-其他特性"><a href="#http2-其他特性" class="headerlink" title="http2 其他特性"></a>http2 其他特性</h3><ol>
+<li><p>可以设置请求的优先级<br>HTTP&#x2F;2 提供了请求优先级，可以在发送请求时，标上该请求的优先级，这样服务器接收到请求之后，会优先处理优先级高的请求。</p>
+</li>
+<li><p>服务器推送<br>除了设置请求的优先级外，HTTP&#x2F;2 还可以直接将数据提前推送到浏览器。你可以想象这样一个场景，当用户请求一个 HTML 页面之后，服务器知道该 HTML 页面会引用几个重要的 JavaScript 文件和 CSS 文件，那么在接收到 HTML 请求之后，附带将要使用的 CSS 文件和 JavaScript 文件一并发送给浏览器，这样当浏览器解析完 HTML 文件之后，就能直接拿到需要的 CSS 文件和 JavaScript 文件，这对首次打开页面的速度起到了至关重要的作用。</p>
+</li>
+<li><p>头部压缩<br>HTTP&#x2F;2 对请求头和响应头进行了压缩，你可能觉得一个 HTTP 的头文件没有多大，压不压缩可能关系不大，但你这样想一下，在浏览器发送请求的时候，基本上都是发送 HTTP 请求头，很少有请求体的发送，通常情况下页面也有 100 个左右的资源，如果将这 100 个请求头的数据压缩为原来的 20%，那么传输效率肯定能得到大幅提升。</p>
+</li>
+</ol>
+<h2 id="同源策略"><a href="#同源策略" class="headerlink" title="同源策略"></a>同源策略</h2><p>如果两个 URL 的协议、域名和端口都相同，我们就称这两个 URL 同源。</p>
+<p>同源策略主要表现在 DOM，web 数据和网络三个层面</p>
+<ul>
+<li>DOM 层面。同源策略限制了来自不同源的 js 脚本对当前 DOM 对象读和写的操作</li>
+<li>数据层面。同源策略限制了不同源站点读取当前站点的 Cookie，indexDB，localStorage 等数据。</li>
+<li>网络层面。同源策略限制了通过 XMLHttpRequest 等方式将站点的数据发送给不同源的站点。</li>
+</ul>
+
                 
               </div>
             
