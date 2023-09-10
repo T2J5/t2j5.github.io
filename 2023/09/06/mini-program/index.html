@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://t2j5.github.io/img/mini-program-index.png">
 <meta property="article:published_time" content="2023-09-06T07:22:39.000Z">
-<meta property="article:modified_time" content="2023-09-07T09:08:53.593Z">
+<meta property="article:modified_time" content="2023-09-10T11:22:59.793Z">
 <meta property="article:author" content="TJ">
 <meta property="article:tag" content="review">
 <meta property="article:tag" content="mini-program">
@@ -257,7 +257,7 @@
         <i class="iconfont icon-chart"></i>
         
           <!-- compatible with older versions-->
-          2.3k 字
+          6.6k 字
         
       </span>
     
@@ -269,7 +269,7 @@
         
         
           <!-- compatible with older versions-->
-          20 分钟
+          55 分钟
         
       </span>
     
@@ -349,7 +349,9 @@
 </blockquote>
 </li>
 </ul>
-<h2 id="双线程模型"><a href="#双线程模型" class="headerlink" title="双线程模型"></a>双线程模型</h2><p>小程序的渲染层和逻辑层分别由两个线程管理：渲染层的界面使用 webView 进行渲染；逻辑层采用 jsCore 运行 js 代码。一个小程序存在多个界面，所以渲染层存在多个 webView。这两个线程间的通信有小程序 Native 侧中转，逻辑层发送网络请求也经由 Native 侧转发，小程序的通信模型为：</p>
+<h2 id="双线程模型"><a href="#双线程模型" class="headerlink" title="双线程模型"></a>双线程模型</h2><img src="/2023/09/06/mini-program/double-thread-frame.png" srcset="/img/loading.gif" lazyload class="" title="double-thread-frame">
+
+<p>小程序的渲染层和逻辑层分别由两个线程管理：渲染层的界面使用 webView 进行渲染；逻辑层采用 jsCore 运行 js 代码。一个小程序存在多个界面，所以渲染层存在多个 webView。这两个线程间的通信有小程序 Native 侧中转，逻辑层发送网络请求也经由 Native 侧转发，小程序的通信模型为：</p>
 <img src="/2023/09/06/mini-program/wechat-miniprogram-framework.png" srcset="/img/loading.gif" lazyload class="" title="wechat-miniprogram">
 
 <p>微信小程序视图层是 WebView，逻辑层是 JS 引擎。三端的脚本执行环境以及用于渲染非原生组件的环境是各不相同的：</p>
@@ -392,6 +394,76 @@
 <p>我们知道微信小程序逻辑层没有浏览器的 DOM&#x2F;BOM，视图层的更新借助于 Virtual DOM。用 JS 对象模拟 DOM 树 -&gt; 比较两棵虚拟 DOM 树的差异 -&gt; 把差异应用到真正的 DOM 树上，状态更新的时候，通过对比前后 JS 对象变化，进而改变视图层的 Dom 树。实际上，在视图层与客户端的交互通信中，开发者只是间接调用的，真正调用是在组件的内部实现中。开发者插入一个原生组件，一般而言，组件运行的时候被插入到 DOM 树中，会调用客户端接口，通知客户端在哪个位置渲染一块原生界面。在后续开发者更新组件属性时，同样地，也会调用客户端提供的更新接口来更新原生界面的某些部分。</p>
 <h3 id="逻辑层接口"><a href="#逻辑层接口" class="headerlink" title="逻辑层接口"></a>逻辑层接口</h3><p>逻辑层与客户端原生通信机制与渲染层类似，不同在于，iOS 平台可以往 JavaScripCore 框架注入一个全局的原生方法，而安卓方面则是跟渲染层一致的。</p>
 <p>同样地，开发者也是间接地调用到与客户端原生通信的底层接口。一般我们会对逻辑层接口做层封装后才暴露给开发者，封装的细节可能是统一入参、做些参数校验、兼容各平台或版本问题等等。</p>
+<h2 id="数据驱动"><a href="#数据驱动" class="headerlink" title="数据驱动"></a>数据驱动</h2><p>wxml 可以先转成 js 对象，然后再渲染出真正的 Dom 树，示例如下：</p>
+<img src="/2023/09/06/mini-program/example.png" srcset="/img/loading.gif" lazyload class="" title="example">
+
+<p>通过 setData 把 msg 数据从“Hello World”变成“Goodbye”，产生的 JS 对象对应的节点就会发生变化，此时可以对比前后两个 JS 对象得到变化的部分，然后把这个差异应用到原来的 Dom 树上，从而达到更新 UI 的目的，这就是“数据驱动”。</p>
+<h2 id="快速渲染设计原理"><a href="#快速渲染设计原理" class="headerlink" title="快速渲染设计原理"></a>快速渲染设计原理</h2><p>小程序采用多个 webview 渲染，更加接近原生 App 的用户体验。</p>
+<p>如果为单页面应用，单独打开一个页面，需要先卸载当前页面结构，并重新渲染。</p>
+<p>多页面应用，新页面直接滑动出来并且覆盖在旧页面上即可。这样用户体验非常好。</p>
+<h3 id="小程序启动流程"><a href="#小程序启动流程" class="headerlink" title="小程序启动流程"></a>小程序启动流程</h3><img src="/2023/09/06/mini-program/start.png" srcset="/img/loading.gif" lazyload class="" title="start">
+
+<h2 id="WXML-设计思路"><a href="#WXML-设计思路" class="headerlink" title="WXML 设计思路"></a>WXML 设计思路</h2><p>程序自行搭建了组件组织框架 Exparser 框架</p>
+<p>Exparser 的组件模型与 WebComponents 标准中的 ShadowDOM 高度相似</p>
+<p>在小程序中：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs vue">&lt;view class=&quot;container&quot;&gt;<br>  Weixin<br>  &lt;text style=&quot;position:relative;&quot;&gt;文本&lt;/text&gt;<br>&lt;/view&gt;<br>&lt;button bindtap=&quot;test&quot;&gt;按钮&lt;/button&gt;<br></code></pre></td></tr></table></figure>
+
+<p>会被 exparser 框架会加上述结构转换为下面样子</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">wx-view</span></span><br><span class="hljs-tag">  <span class="hljs-attr">exparser:info-class-prefix</span>=<span class="hljs-string">&quot;&quot;</span></span><br><span class="hljs-tag">  <span class="hljs-attr">exparser:info-component-id</span>=<span class="hljs-string">&quot;2&quot;</span></span><br><span class="hljs-tag">  <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;container&quot;</span></span><br><span class="hljs-tag">&gt;</span><br>  Weixin<br>  <span class="hljs-tag">&lt;<span class="hljs-name">wx-text</span></span><br><span class="hljs-tag">    <span class="hljs-attr">exparser:info-class-prefix</span>=<span class="hljs-string">&quot;&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">exparser:info-component-id</span>=<span class="hljs-string">&quot;3&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">style</span>=<span class="hljs-string">&quot;position:relative;&quot;</span></span><br><span class="hljs-tag">  &gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">style</span>=<span class="hljs-string">&quot;display:none;&quot;</span>&gt;</span>文本<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">span</span>&gt;</span>文本<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>&lt;/wx-text<br>  &gt;<br><span class="hljs-tag">&lt;/<span class="hljs-name">wx-view</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">wx-button</span></span><br><span class="hljs-tag">  <span class="hljs-attr">exparser:info-class-prefix</span>=<span class="hljs-string">&quot;&quot;</span></span><br><span class="hljs-tag">  <span class="hljs-attr">exparser:info-component-id</span>=<span class="hljs-string">&quot;4&quot;</span></span><br><span class="hljs-tag">  <span class="hljs-attr">exparser:info-attr-bindtap</span>=<span class="hljs-string">&quot;test&quot;</span></span><br><span class="hljs-tag">  <span class="hljs-attr">role</span>=<span class="hljs-string">&quot;button&quot;</span></span><br><span class="hljs-tag">  <span class="hljs-attr">aria-disabled</span>=<span class="hljs-string">&quot;false&quot;</span></span><br><span class="hljs-tag">&gt;</span><br>  按钮<br><span class="hljs-tag">&lt;/<span class="hljs-name">wx-button</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p>这样就和 WebComponents 基本一致</p>
+<h3 id="WebComponents"><a href="#WebComponents" class="headerlink" title="WebComponents"></a>WebComponents</h3><p>Web Components 是一个浏览器原生支持的组件化方案，允许你创建新的自定义、可封装、可重用的 HTML 标记。不用加载任何外部模块，直接就可以在浏览器中跑。</p>
+<p>如下代码，标签就是自定义组件的标签了，它不属于 html 语义化标签中的任何一个，是自定义的。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">html</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span> <span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">user-body</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">user-body</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">template</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;userCardId&quot;</span>&gt;</span><br>    <span class="hljs-comment">&lt;!-- 组件样式与代码封装在一起，只对自定义元素生效，不会影响外部的全局样式 --&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">style</span>&gt;</span><span class="language-css"></span><br><span class="language-css">      name &#123;</span><br><span class="language-css">        <span class="hljs-attribute">color</span>: red;</span><br><span class="language-css">        <span class="hljs-attribute">font-size</span>: <span class="hljs-number">50px</span>;</span><br><span class="language-css">      &#125;</span><br><span class="language-css">      <span class="hljs-selector-tag">button</span> &#123;</span><br><span class="language-css">        <span class="hljs-attribute">width</span>: <span class="hljs-number">200px</span>;</span><br><span class="language-css">      &#125;</span><br><span class="language-css">    </span><span class="hljs-tag">&lt;/<span class="hljs-name">style</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">p</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;name&quot;</span>&gt;</span>21312<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">button</span>&gt;</span>test<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span><br>  <span class="hljs-tag">&lt;/<span class="hljs-name">template</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-javascript"></span><br><span class="language-javascript">    <span class="hljs-keyword">class</span> <span class="hljs-title class_">UserCard</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_ inherited__">HTMLElement</span> &#123;</span><br><span class="language-javascript">      <span class="hljs-title function_">constructor</span>(<span class="hljs-params"></span>) &#123;</span><br><span class="language-javascript">        <span class="hljs-variable language_">super</span>();</span><br><span class="language-javascript">        <span class="hljs-keyword">const</span> shadow = <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">attachShadow</span>(&#123; <span class="hljs-attr">mode</span>: <span class="hljs-string">&quot;closed&quot;</span> &#125;);</span><br><span class="language-javascript">        <span class="hljs-keyword">const</span> templateElem = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&quot;userCardId&quot;</span>);</span><br><span class="language-javascript"></span><br><span class="language-javascript">        <span class="hljs-keyword">const</span> content = templateElem.<span class="hljs-property">content</span>.<span class="hljs-title function_">cloneNode</span>(<span class="hljs-literal">true</span>);</span><br><span class="language-javascript"></span><br><span class="language-javascript">        shadow.<span class="hljs-title function_">appendChild</span>(content);</span><br><span class="language-javascript">      &#125;</span><br><span class="language-javascript">    &#125;</span><br><span class="language-javascript">    <span class="hljs-variable language_">window</span>.<span class="hljs-property">customElements</span>.<span class="hljs-title function_">define</span>(<span class="hljs-string">&quot;user-card&quot;</span>, <span class="hljs-title class_">UserCard</span>);</span><br><span class="language-javascript">  </span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p>WebComponent 主要就是三个规范：</p>
+<h4 id="custom-Elements-规范"><a href="#custom-Elements-规范" class="headerlink" title="custom Elements 规范"></a>custom Elements 规范</h4><p>可以创建一个自定义标签。根据规范，自定义元素的名称必须包含连接线”-“,用于区别原生 html 元素</p>
+<p>可以指定多个不同的回调函数，它们将会在元素的不同生命时期被调用</p>
+<h4 id="templates-规范"><a href="#templates-规范" class="headerlink" title="templates 规范"></a>templates 规范</h4><p>提供了<code>&lt;template&gt;</code> 标签，可以在它里面使用 HTML 定义 DOM 结构</p>
+<h4 id="Shadow-DOM-规范"><a href="#Shadow-DOM-规范" class="headerlink" title="Shadow DOM 规范"></a>Shadow DOM 规范</h4><p>首先实例化一个根节点，挂在到宿主上，这里的宿主是 this。上面说过 this 指向 user-card。</p>
+<p>然后我们把创建的 DOM 结构，或者<code>&lt;template&gt;</code>结构挂载到影子根上即可。看一下 HTML 结构展示</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">var</span> shadow = <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">attachShadow</span>(&#123; <span class="hljs-attr">mode</span>: <span class="hljs-string">&quot;closed&quot;</span> &#125;);<br>shadow.<span class="hljs-title function_">appendChild</span>(content);<br></code></pre></td></tr></table></figure>
+
+<h3 id="Exparser-框架原理"><a href="#Exparser-框架原理" class="headerlink" title="Exparser 框架原理"></a>Exparser 框架原理</h3><p>Exparser 是微信小城的组件组织框架，内置在小程序基础库中，为小程序提供各种各样的组件支撑<br>内置组件和自定义组件都由 Exparser 框架组织管理</p>
+<p>Exparser 组件模型与 WebComponents 标准中的 Shadow DOM 高度相似</p>
+<p>Exparser 会维护整个页面的节点树相关信息，包括节点的属性，事件绑定等，相当于一个简化版的 Shadow DOM 实现。Exparser 的主要特点包括如下:</p>
+<ul>
+<li>基于 Shadow DOM 模型: 模型上与 WebComponents 的 ShadowDOM 高度相似，但不依赖浏览器的原生支持，也没有其他依赖库；实现时，还针对性地增加了其他 API 以支持小程序组件编程。</li>
+<li>可在纯 JS 环境中运行: 这意味着逻辑层也具有一定的组件树组织能力。</li>
+<li>高效轻量：性能表现好，在组件实例极多的环境下表现尤其优异，同时代码尺寸也较小。</li>
+</ul>
+<p>小程序中，所有节点树相关的操作都依赖于 Exparser，包括 WXML 到页面最终节点树的构建和自定义组件特性等。</p>
+<h3 id="rpx-px"><a href="#rpx-px" class="headerlink" title="rpx -&gt; px"></a>rpx -&gt; px</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-comment">// px = rpx 值 / 基础设备宽度 750 * 设备宽度</span><br>number = (number / <span class="hljs-variable constant_">BASE_DEVICE_WIDTH</span>) * (newDeviceWidth || deviceWidth);<br></code></pre></td></tr></table></figure>
+
+<h3 id="事件绑定"><a href="#事件绑定" class="headerlink" title="事件绑定"></a>事件绑定</h3><ul>
+<li><p>最开始在 wxml 文件中定义的事件绑定，其实转化成虚拟 dom 树结构之后，其实只是一个键值对，表明了某个 dom 上有绑定某个事件，并没有完成事件绑定。</p>
+</li>
+<li><p><code>WAWebview.js</code> 处理虚拟 dom 树时，会去循环遍历 attr 属性，判断 attr 中的属性名是否为事件属性</p>
+</li>
+<li><p>如果是，通过 <code>addListener</code> 方法进行了事件绑定。可以理解成，通过 addListener 方法监听 tap 事件，就相当于 window.addEventListener 对 mouseup 方法的监听。回调函数中对函数的 event 信息进行组装，并触发 sendData 方法。sendData 方法就是向逻辑线程发送 event 数据的方法。</p>
+</li>
+</ul>
+<img src="/2023/09/06/mini-program/event.png" srcset="/img/loading.gif" lazyload class="" title="event">
+
+<blockquote>
+<p>目前在触发 sendData 方法之前这些逻辑的解析包括 event 参数的组装都是在渲染层的底层基础库 WAWebview.js 中完成的，也就是说还在渲染线程中。</p>
+</blockquote>
+<h3 id="通讯系统设计"><a href="#通讯系统设计" class="headerlink" title="通讯系统设计"></a>通讯系统设计</h3><p>最上面提到，视图层和逻辑层通讯是通过 Native 层。</p>
+<p>具体的手段就是</p>
+<p>ios 利用 WKWebView 的提供 messageHandlers 特性<br>android 是往 webview 的 window 对象注入一个原生方法<br>这两种会统一封装成 weixinJSBridge，这和正常 h5 与客户端通讯手段一致</p>
+<p>初始化过程中 Native 层理论上是微信客户端，分别在视图层和业务逻辑层注入了 WeixinJSBridge</p>
+<h2 id="生命周期"><a href="#生命周期" class="headerlink" title="生命周期"></a>生命周期</h2><h3 id="data"><a href="#data" class="headerlink" title="data"></a>data</h3><p>逻辑层的 data 与 view 是相互绑定的，data 是页面第一次渲染使用的初始数据。页面加载的时候，data 将会以 JSON 字符串形式由逻辑层传至渲染层。因此 data 中的数据必须是可以转成 JSON 的类型：字符串，数字，布尔值，对象，数组。</p>
+<p>渲染层发出信号，发出一个我已经初始化完毕的信号发给逻辑层，并且自身状态进入等待。</p>
+<p>逻辑层收到这个信号的时候有两种情况。</p>
+<p>第一种就是自身还没初始化完，那么收到此信号后只需要初始化完毕后发送初始数据 Data 到渲染层即可。<br>第二种情况就是逻辑层早已经进入等待状态，那么收到信号后立即发送初始数据 Data 到渲染层即可。</p>
+<h3 id="生命周期-1"><a href="#生命周期-1" class="headerlink" title="生命周期"></a>生命周期</h3><ul>
+<li><code>onLoad(query:Object)</code>: 页面加载时触发，一个页面只会调用一次，可以在 onLoad 的参数中获取打开当前页面路径中的参数。</li>
+<li><code>onShow()</code>: 页面显示&#x2F;切入前台时触发</li>
+<li><code>onHide()</code>: 页面隐藏&#x2F;切入后台时触发。 如 wx.navigateTo 或底部 tab 切换到其他页面，小程序切入后台等</li>
+<li><code>onReady()</code>: 页面初次渲染完成时触发。一个页面只会调用一次，代表页面已经准备妥当，可以和视图层进行交互。</li>
+<li><code>onUnload()</code>: 页面卸载时触发。如 wx.redirectTo 或 wx.navigateBack 到其他页面时</li>
+</ul>
+<h2 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h2><p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/2142622">微信小程序底层框架实现原理｜万字长文</a></p>
 
                 
               </div>
@@ -463,9 +535,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/09/06/event-loop/" title="浏览器事件循环机制">
+                      <a href="/2023/09/06/browser-render/" title="浏览器">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">浏览器事件循环机制</span>
+                        <span class="hidden-mobile">浏览器</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
