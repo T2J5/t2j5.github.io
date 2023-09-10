@@ -14,7 +14,7 @@ banner_img: /img/http_banner.jpg
 
 - 带宽优化及网络连接的使用
 - 错误通知的管理
-- Host 头处理
+- Host 头处理，针对多虚拟机在同一物理主机情况
 - 长连接 http1.1 默认开启`Connection： keep-alive`,一定程度上摸不了 http1.0 每次请求都要创建连接的缺点
 
 相对于 http1.1，http2 的优化：
