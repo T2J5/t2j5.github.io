@@ -1,0 +1,37 @@
+{
+  "name": "hexo-site",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "hexo generate",
+    "clean": "hexo clean",
+    "deploy": "hexo deploy",
+    "server": "hexo server"
+  },
+  "homepage": "https://t2j5.github.io/",
+  "hexo": {
+    "version": "6.3.0"
+  },
+  "dependencies": {
+    "hexo": "^6.3.0",
+    "hexo-deployer-git": "^4.0.0",
+    "hexo-generator-archive": "^2.0.0",
+    "hexo-generator-category": "^2.0.0",
+    "hexo-generator-index": "^3.0.0",
+    "hexo-generator-tag": "^2.0.0",
+    "hexo-helper-live2d": "^3.1.1",
+    "hexo-renderer-ejs": "^2.0.0",
+    "hexo-renderer-marked": "^6.0.0",
+    "hexo-renderer-stylus": "^3.0.0",
+    "hexo-server": "^3.0.0",
+    "hexo-tag-color-block": "^0.0.3",
+    "hexo-tag-hint": "^0.3.1",
+    "hexo-theme-fluid": "^1.9.5-a",
+    "hexo-theme-landscape": "^1.0.0",
+    "live2d-widget-model-hibiki": "^1.0.5",
+    "live2d-widget-model-miku": "^1.0.5",
+    "live2d-widget-model-shizuku": "^1.0.5",
+    "live2d-widget-model-wanko": "^1.0.5",
+    "live2d-widget-model-z16": "^1.0.5"
+  }
+}

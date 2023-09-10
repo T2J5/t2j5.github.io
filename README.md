@@ -1,7 +1,3 @@
-# interview
+# 个人博客
 
-## 部署到 GitHub
-
-hexo g -d
-
-hexo clean && hexo deploy
+[我的博客](https://t2j5.github.io/)
