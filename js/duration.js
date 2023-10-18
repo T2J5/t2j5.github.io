@@ -1,4 +1,4 @@
-var now = new Date();
+<link rel="stylesheet" type="text&#x2F;css" href="https://cdn.jsdelivr.net/npm/hexo-tag-hint@0.3.1/dist/hexo-tag-hint.min.css">var now = new Date();
 function createtime() {
     var grt= new Date("08/17/2023 12:00:00");//在此处修改你的建站时间，格式：月/日/年 时:分:秒
     now.setTime(now.getTime()+250);
