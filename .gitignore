@@ -1,0 +1,7 @@
+node_modules
+.history
+public/
+.deploy*/
+db.json
+Thumbs.db
+*.log
