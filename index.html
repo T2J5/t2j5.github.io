@@ -265,7 +265,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2024/04/23/Promise/" target="_self">
         <div>
-          promise
+          fetch函数的一个异常行为是，只要它收到一个HTTP状态码，哪怕是404或500，返回的Promise就是处于履行状态的。只有当当网络请求因某种原因失败时，Promise才会处于拒绝状态。如果想确保HTTP状态码在200~299这个范围内，那么可以检查response.ok属性。  MDN 解释全局 fetch() 方法用于发起获取资源的请求，它会返回一个会在请求响应后兑现的 promise。
         </div>
       </a>
 
