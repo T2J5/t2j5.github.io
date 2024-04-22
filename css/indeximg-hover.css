@@ -1,0 +1,6 @@
+<link rel="stylesheet" type="text&#x2F;css" href="https://cdn.jsdelivr.net/npm/hexo-tag-hint@0.3.1/dist/hexo-tag-hint.min.css">.index-img {
+  transition: .4s;           /*动画时间*/
+}
+.index-card:hover .index-img {
+  transform: scale(1.05);    /*放大倍数*/
+}
