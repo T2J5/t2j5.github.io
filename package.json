@@ -5,6 +5,7 @@
   "scripts": {
     "build": "hexo generate",
     "check": "hexo clean && hexo generate",
+    "import:ai": "node tools/import-obsidian-ai.mjs",
     "clean": "hexo clean",
     "server": "hexo server"
   },
