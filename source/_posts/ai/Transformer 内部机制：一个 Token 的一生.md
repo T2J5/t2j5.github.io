@@ -5,6 +5,9 @@ categories:
   - ai
 tags:
   - ai
+index_img: /img/covers/ai.svg
+banner_img: /img/covers/ai.svg
+updated: 2026-07-12
 ---
 
 原文链接：[https://www.aleksagordic.com/blog/transformer](https://www.aleksagordic.com/blog/transformer)  

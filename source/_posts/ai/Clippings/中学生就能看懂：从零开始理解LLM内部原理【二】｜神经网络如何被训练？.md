@@ -7,6 +7,9 @@ tags:
   - ai
 source: "https://mp.weixin.qq.com/s/3u-H2X5CignrmQxZeu5BtA"
 original: true
+index_img: /img/covers/ai.svg
+banner_img: /img/covers/ai.svg
+updated: 2026-07-12
 ---
 
 > 原文来源：https://mp.weixin.qq.com/s/3u-H2X5CignrmQxZeu5BtA

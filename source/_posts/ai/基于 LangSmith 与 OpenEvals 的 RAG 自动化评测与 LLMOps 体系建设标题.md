@@ -5,6 +5,9 @@ categories:
   - ai
 tags:
   - ai
+index_img: /img/covers/ai.svg
+banner_img: /img/covers/ai.svg
+updated: 2026-07-12
 ---
 
 大语言模型（LLM）的输出具备天然的**非确定性（Non-deterministic）**。在商业级 RAG（检索增强生成）系统的生产部署中，如何量化评估迭代效果、捕捉线上幻觉、以及对全链路进行质量监控，是 LLMOps（大模型运维）的核心痛点。

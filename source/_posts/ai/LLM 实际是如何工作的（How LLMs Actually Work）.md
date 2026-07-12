@@ -5,6 +5,9 @@ categories:
   - ai
 tags:
   - ai
+index_img: /img/covers/ai.svg
+banner_img: /img/covers/ai.svg
+updated: 2026-07-12
 ---
 
 原文链接：[https://www.0xkato.xyz/how-llms-actually-work/](https://www.0xkato.xyz/how-llms-actually-work/)

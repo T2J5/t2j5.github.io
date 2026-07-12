@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-label="AI cover">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0b1020"/><stop offset=".55" stop-color="#172554"/><stop offset="1" stop-color="#155e75"/></linearGradient><radialGradient id="r"><stop stop-color="#67e8f9" stop-opacity=".85"/><stop offset="1" stop-color="#38bdf8" stop-opacity="0"/></radialGradient></defs>
+  <rect width="1600" height="900" fill="url(#g)"/><circle cx="1200" cy="220" r="420" fill="url(#r)"/><g fill="none" stroke="#a5f3fc" stroke-opacity=".5"><path d="M180 680L480 420 750 610 1060 300 1420 520"/><path d="M180 740L480 480 750 670 1060 360 1420 580" stroke-opacity=".18"/></g><g fill="#e0f2fe"><circle cx="480" cy="420" r="11"/><circle cx="750" cy="610" r="11"/><circle cx="1060" cy="300" r="11"/></g>
+</svg>

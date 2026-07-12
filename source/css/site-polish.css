@@ -1,0 +1,21 @@
+:root { --accent: #2563eb; --ink: #172033; --paper: #f7f9fc; }
+body { background: var(--paper); color: var(--ink); }
+#navbar { backdrop-filter: blur(16px); background: rgba(255,255,255,.82); box-shadow: 0 1px 0 rgba(15,23,42,.06); }
+#navbar .navbar-brand, #navbar .nav-link { color: #172033 !important; font-weight: 600; }
+#navbar .nav-link:hover { color: var(--accent) !important; }
+.banner .banner-text { text-shadow: 0 2px 24px rgba(15,23,42,.42); }
+.index-card, .post-content, #board-ctn, .page-content { border-radius: 18px; box-shadow: 0 8px 30px rgba(15,23,42,.06); }
+.index-card { overflow: hidden; border: 1px solid rgba(148,163,184,.18); transition: transform .2s ease, box-shadow .2s ease; }
+.index-card:hover { transform: translateY(-3px); box-shadow: 0 18px 36px rgba(15,23,42,.12); }
+.markdown-body { font-size: 1.06rem; line-height: 1.9; letter-spacing: .012em; }
+.markdown-body h1, .markdown-body h2, .markdown-body h3 { color: #0f172a; letter-spacing: -.015em; }
+.markdown-body h2 { margin-top: 2.4rem; padding-bottom: .55rem; border-bottom: 1px solid #e2e8f0; }
+.markdown-body h3 { margin-top: 1.8rem; }
+.markdown-body p, .markdown-body li { max-width: 76ch; }
+.markdown-body blockquote { border-left-color: #60a5fa; background: #eff6ff; color: #334155; border-radius: 0 10px 10px 0; }
+.markdown-body table { display: table; width: 100%; border-radius: 10px; overflow: hidden; }
+.markdown-body th { background: #eff6ff; }
+.markdown-body pre { border-radius: 12px; box-shadow: 0 8px 22px rgba(15,23,42,.16); }
+.markdown-body img { border-radius: 12px; box-shadow: 0 8px 24px rgba(15,23,42,.1); }
+.tocbot-list-menu a.toc-link.active-link { color: var(--accent); border-left-color: var(--accent); }
+@media (max-width: 767px) { .markdown-body { font-size: 1rem; line-height: 1.78; } .index-card, .post-content, #board-ctn, .page-content { border-radius: 12px; } }

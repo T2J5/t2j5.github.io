@@ -7,6 +7,9 @@ tags:
   - ai
 source: "https://mp.weixin.qq.com/s?__biz=Mzk1NzQ1ODk5NQ==&mid=2247525666&idx=1&sn=d48e9a4da9526b079d2a45891b1b6540&chksm=c3dfda7ef4a853687c7bf88872c1f8b060a10b14a53a1338e63f83f242867e5e79d6aaed60bf&cur_album_id=3801563016806531077&scene=189#wechat_redirect"
 original: true
+index_img: /img/covers/ai.svg
+banner_img: /img/covers/ai.svg
+updated: 2026-07-12
 ---
 
 > 原文来源：https://mp.weixin.qq.com/s?__biz=Mzk1NzQ1ODk5NQ==&mid=2247525666&idx=1&sn=d48e9a4da9526b079d2a45891b1b6540&chksm=c3dfda7ef4a853687c7bf88872c1f8b060a10b14a53a1338e63f83f242867e5e79d6aaed60bf&cur_album_id=3801563016806531077&scene=189#wechat_redirect

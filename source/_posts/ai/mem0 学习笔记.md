@@ -5,6 +5,11 @@ categories:
   - ai
 tags:
   - ai
+index_img: /img/covers/ai.svg
+banner_img: /img/covers/ai.svg
+updated: 2026-07-12
+math: true
+mermaid: true
 ---
 
 # mem0 学习笔记：从架构设计到 Agent 落地的系统化拆解

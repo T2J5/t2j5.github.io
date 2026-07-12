@@ -2,6 +2,9 @@
 title: electron
 date: 2023-10-18 19:13:04
 tags:
+index_img: /img/covers/web.svg
+banner_img: /img/covers/web.svg
+updated: 2026-07-11
 ---
 
 ## 性能相关

@@ -2,8 +2,9 @@
 title: redux
 date: 2023-09-12 08:32:39
 tags: ["redux", "review"]
-index_img:
-banner_img:
+index_img: /img/covers/web.svg
+banner_img: /img/covers/web.svg
+updated: 2026-07-11
 ---
 
 ## redux 有什么缺点

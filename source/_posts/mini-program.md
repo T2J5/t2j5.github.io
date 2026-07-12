@@ -4,6 +4,7 @@ date: 2023-09-06 15:22:39
 tags: ["review", "mini-program"]
 index_img: /img/mini-program-index.png
 banner_img: /img/mini-program-banner.png
+updated: 2026-07-11
 ---
 
 ## 登录

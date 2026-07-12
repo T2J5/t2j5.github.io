@@ -5,6 +5,10 @@ categories:
   - ai
 tags:
   - ai
+index_img: /img/covers/ai.svg
+banner_img: /img/covers/ai.svg
+updated: 2026-07-12
+mermaid: true
 ---
 
 # Agent 开发学习路线图（含学习计划、目标、模块能力与 Claude Code/Codex/OpenClaw 管理实践）

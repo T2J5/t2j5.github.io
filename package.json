@@ -6,6 +6,7 @@
     "build": "hexo generate",
     "check": "hexo clean && hexo generate",
     "import:ai": "node tools/import-obsidian-ai.mjs",
+    "normalize:posts": "node tools/normalize-post-covers.mjs",
     "clean": "hexo clean",
     "server": "hexo server"
   },

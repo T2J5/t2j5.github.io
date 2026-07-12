@@ -4,6 +4,7 @@ date: 2023-09-11 00:28:33
 tags: ["react", "review"]
 index_img: /img/react-index.jpg
 banner_img: /img/react-banner.png
+updated: 2026-07-11
 ---
 
 ## React 合成事件机制

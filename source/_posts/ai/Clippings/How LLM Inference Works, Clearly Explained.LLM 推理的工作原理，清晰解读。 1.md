@@ -7,6 +7,10 @@ tags:
   - ai
 source: "https://x.com/_avichawla/status/2071201619530956863"
 original: true
+index_img: /img/covers/ai.svg
+banner_img: /img/covers/ai.svg
+updated: 2026-07-12
+math: true
 ---
 
 > 原文来源：https://x.com/_avichawla/status/2071201619530956863

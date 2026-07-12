@@ -6,6 +6,10 @@ categories:
 tags:
   - ai
 source: "https://github.com/obra/superpowers"
+index_img: /img/covers/ai.svg
+banner_img: /img/covers/ai.svg
+updated: 2026-07-12
+mermaid: true
 ---
 
 # Superpowers 使用指南

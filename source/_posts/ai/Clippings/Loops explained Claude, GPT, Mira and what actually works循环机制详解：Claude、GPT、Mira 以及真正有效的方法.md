@@ -7,6 +7,9 @@ tags:
   - ai
 source: "https://x.com/AnatoliKopadze/status/2068328135611822149"
 original: true
+index_img: /img/covers/ai.svg
+banner_img: /img/covers/ai.svg
+updated: 2026-07-12
 ---
 
 > 原文来源：https://x.com/AnatoliKopadze/status/2068328135611822149

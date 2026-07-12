@@ -4,6 +4,7 @@ date: 2023-09-05 12:46:39
 tags: ["http", "review"]
 index_img: /img/http_index.jpg
 banner_img: /img/http_banner.jpg
+updated: 2026-07-11
 ---
 
 ## http1、http2

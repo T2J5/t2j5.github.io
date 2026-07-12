@@ -7,6 +7,9 @@ tags:
   - ai
 source: "https://x.com/dair_ai/status/2066174390048358760"
 original: true
+index_img: /img/covers/ai.svg
+banner_img: /img/covers/ai.svg
+updated: 2026-07-12
 ---
 
 > 原文来源：https://x.com/dair_ai/status/2066174390048358760

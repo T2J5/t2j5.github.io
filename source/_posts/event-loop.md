@@ -4,6 +4,7 @@ date: 2023-09-06 15:25:39
 tags: ["browser", "review"]
 index_img: /img/event-loop-index.jpg
 banner_img: /img/event-loop-banner.png
+updated: 2026-07-11
 ---
 
 ## 线程和进程

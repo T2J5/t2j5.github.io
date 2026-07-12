@@ -5,6 +5,10 @@ categories:
   - ai
 tags:
   - ai
+index_img: /img/covers/ai.svg
+banner_img: /img/covers/ai.svg
+updated: 2026-07-12
+mermaid: true
 ---
 
 # TypeORM 在 Node.js 中的系统学习笔记（面向 Agent 开发）

@@ -2,6 +2,7 @@
 title: 深入浅出node.js
 date: 2024-01-13 17:32:17
 tags: ["nodejs"]
-index_img: /img/react-index.jpg
-banner_img: /img/react-banner.png
+index_img: /img/covers/notes.svg
+banner_img: /img/covers/notes.svg
+updated: 2026-07-11
 ---

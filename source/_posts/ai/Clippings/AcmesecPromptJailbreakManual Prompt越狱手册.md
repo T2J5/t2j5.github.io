@@ -7,6 +7,10 @@ tags:
   - ai
 source: "https://github.com/Acmesec/PromptJailbreakManual"
 original: true
+index_img: /img/covers/ai.svg
+banner_img: /img/covers/ai.svg
+updated: 2026-07-12
+math: true
 ---
 
 > 原文来源：https://github.com/Acmesec/PromptJailbreakManual
