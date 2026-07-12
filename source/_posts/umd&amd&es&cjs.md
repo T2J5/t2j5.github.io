@@ -1,5 +1,7 @@
 ---
 title: AMD && CMD && CommonJs && UMD && ES
+date: 2023-08-17 00:00:00
+tags: ["js", "module"]
 index_img: /img/7.jpg
 banner_img: https://i.pinimg.com/originals/d6/94/bb/d694bbcd2be272ed02051b7a83d9b7aa.jpg
 ---

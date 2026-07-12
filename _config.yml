@@ -5,11 +5,11 @@
 # Site
 title: "TJ"
 subtitle: ''
-description: ''
-keywords:
+description: 'TJ 的前端工程、浏览器原理与 Web 性能笔记。'
+keywords: 前端开发,浏览器原理,Web 性能,JavaScript,React,HTTP
 author: TJ
 language: zh-CN
-timezone:
+timezone: Asia/Shanghai
 
 # URL
 ## Set your site url here. For example, if you use GitHub Page, set url as 'https://username.github.io/project'
@@ -42,7 +42,7 @@ filename_case: 0
 render_drafts: false
 post_asset_folder: true # Set to true to create folder
 relative_link: false
-future: true
+future: false
 highlight:
   enable: true
   line_number: true
@@ -99,31 +99,3 @@ ignore:
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
 theme: fluid
-
-# Deployment
-## Docs: https://hexo.io/docs/one-command-deployment
-deploy:
-  type: git
-  # repository: https://github.com/T2J5/t2j5.github.io
-  repository: git@github.com:T2J5/t2j5.github.io.git
-  branch: master
-  token: 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
-
-live2d:
-  enable: true
-  scriptFrom: local
-  pluginRootPath: live2dw/
-  pluginJsPath: lib/
-  pluginModelPath: assets/
-  tagMode: false
-  debug: false
-  model:
-    use: live2d-widget-model-hibiki  ## 更换为你的模型 miku z-16 shizuku hibiki
-  display:
-    position: right
-    width: 150
-    height: 350
-  mobile:
-    show: true
-  react:
-    opacity: 0.7
